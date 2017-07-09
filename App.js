@@ -13,20 +13,20 @@ Ext.define("CustomApp", {
                 {
                     text: "TYPE \\ METHOD",
                     dataIndex: "type",
-                    align: 'left',
+                    align: 'left'
                 }, {
                     text: "Manual",
                     dataIndex: "manual",
-                    align: 'center',
+                    align: 'center'
                 }, {
                     text: "Automated",
                     dataIndex: "auto",
                     align: 'center',
-                    flex: 1,
+                    flex: 1
                 }, {
                     text: "Total # of TC",
                     dataIndex: "tc",
-                    align: 'center',
+                    align: 'center'
                 }],
             width: 500,
             padding: 15
@@ -37,32 +37,32 @@ Ext.define("CustomApp", {
 
 
     _createTable: function (objArray) {
-        Ext.create("Ext.data.Store", {
-            storeId: "simpsonsStore",
-            fields: ["type", "manual", "auto", "tc"],
-            data: {
-                items: objArray
-            },
-            proxy: {
-                type: "memory",
-                reader: {
-                    type: "json",
-                    root: "items"
-                }
+        var flag;
+        var me = this;
+
+        objArray.forEach(function (obj) {
+            if ((obj.auto === '') || (obj.manual === '') || (obj.tc === '')) {
+                flag = 'Something';
             }
         });
 
-        var flag;
-
-        for (var obj in objArray) {
-            if (!(obj.auto && obj.manual && obj.type && obj.tc)) {
-                flag = 'Set the flag'
-            }
+        if (!flag) {
+            Ext.create("Ext.data.Store", {
+                storeId: "simpsonsStore",
+                fields: ["type", "manual", "auto", "tc"],
+                data: {
+                    items: objArray
+                },
+                proxy: {
+                    type: "memory",
+                    reader: {
+                        type: "json",
+                        root: "items"
+                    }
+                }
+            });
+            me._showTable();
         }
-
-        // if (!flag) {
-        this._showTable();
-        // }
     },
 
     _loadData: function () {
@@ -183,10 +183,9 @@ Ext.define("CustomApp", {
                 autoLoad: true,
                 filters: filter,
                 listeners: {
-                    load: function (myStore, data, success) {
+                    load: function (myStore) {
                         // console.log(myStore);
-                        console.log(data);
-                        console.log(filter.toString());
+                        // console.log(data);
                         var stringFilter = filter.toString();
                         objArray.forEach(function (obj) {
                             switch (obj.type) {
@@ -272,7 +271,7 @@ Ext.define("CustomApp", {
                                     console.log('Default');
                             }
                         });
-                        console.log('\n Array to be passed', objArray, '\n');
+
                         me._createTable(objArray);
                     },
                     scope: this
